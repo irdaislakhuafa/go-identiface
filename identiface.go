@@ -127,7 +127,7 @@ func (i *identiface[ID]) AddSingleDatasetFromBytes(id ID, datasetBytes []byte) e
 	if i.isCNN {
 		faces, err = i.rec.RecognizeCNN(datasetBytes)
 	} else if i.isGrey {
-		// TODO: handle recognize grey image here
+		// TODO: handle grey image recognization here
 	} else {
 		faces, err = i.rec.Recognize(datasetBytes)
 	}
@@ -158,7 +158,28 @@ func (i *identiface[ID]) ClassifySingleFromBytes(datasetBytes []byte) (Data[ID],
 
 // Recognize single face from `datasetBytes`. Return `error` if face more than one or `datasetBytes` does not contain face
 func (i *identiface[ID]) RecognizeSingleFromBytes(datasetBytes []byte) (face.Face, error) {
-	panic("not implemented") // TODO: Implement
+	var (
+		err    error
+		faceID *face.Face
+	)
+
+	if i.isCNN {
+		faceID, err = i.rec.RecognizeSingleCNN(datasetBytes)
+	} else if i.isGrey {
+		// TODO: handle grey image recognization here
+	} else {
+		faceID, err = i.rec.RecognizeSingle(datasetBytes)
+	}
+
+	if err != nil {
+		return face.Face{}, errors.NewWithCode(codes.CodeIdentiface, "cannot recognize single face, %v", err)
+	}
+
+	if faceID == nil {
+		return face.Face{}, errors.NewWithCode(codes.CodeIdentiface, "the bytes dataset does not contain a single face")
+	}
+
+	return *faceID, nil
 }
 
 // Set custom recognizer with `https://github.com/Kagami/go-face.git`. By default using `face.NewRecognizer()`
