@@ -153,7 +153,18 @@ func (i *identiface[ID]) AddSingleDatasetFromBytes(id ID, datasetBytes []byte) e
 
 // Classify or Identify single datasets. Will return `error` if dataset from parameter is not recognized based on used datasets
 func (i *identiface[ID]) ClassifySingleFromBytes(datasetBytes []byte) (Data[ID], error) {
-	panic("not implemented") // TODO: Implement
+	faceID, err := i.RecognizeSingleFromBytes(datasetBytes)
+	if err != nil {
+		return Data[ID]{}, err
+	}
+
+	personID := i.rec.ClassifyThreshold(faceID.Descriptor, i.tolerance)
+	if personID < 0 {
+		return Data[ID]{}, errors.NewWithCode(codes.CodeIdentiface, "can't classify bytes dataset, may dataset not registered")
+	}
+
+	data := i.datasets[personID]
+	return data, nil
 }
 
 // Recognize single face from `datasetBytes`. Return `error` if face more than one or `datasetBytes` does not contain face
