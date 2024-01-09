@@ -119,7 +119,36 @@ func (i *identiface[ID]) LoadDatasets() {
 
 // Adding single datasets for face recognization from bytes dataset
 func (i *identiface[ID]) AddSingleDatasetFromBytes(id ID, datasetBytes []byte) error {
-	panic("not implemented") // TODO: Implement
+	var (
+		err   error
+		faces []face.Face
+	)
+
+	if i.isCNN {
+		faces, err = i.rec.RecognizeCNN(datasetBytes)
+	} else if i.isGrey {
+		// TODO: handle recognize grey image here
+	} else {
+		faces, err = i.rec.Recognize(datasetBytes)
+	}
+
+	if err != nil {
+		return errors.NewWithCode(codes.CodeIdentiface, "cannot recognize face from bytes dataset, %v", err)
+	}
+
+	if lf := len(faces); lf <= 0 {
+		return errors.NewWithCode(codes.CodeIdentiface, "no face detected from bytes dataset")
+	} else if lf > 1 {
+		return errors.NewWithCode(codes.CodeIdentiface, "there is more than one face from bytes dataset")
+	}
+
+	data := Data[ID]{
+		ID:   id,
+		Face: faces[0],
+	}
+
+	i.datasets = append(i.datasets, data)
+	return nil
 }
 
 // Classify or Identify single datasets. Will return `error` if dataset from parameter is not recognized based on used datasets
