@@ -47,13 +47,13 @@ type Identiface[ID any] interface {
 	GetTolerance() float32
 
 	// Set value to `true` if want use grey image. By default `false`
-	SetGrey(grey bool) Identiface[ID]
+	SetGrey(isGrey bool) Identiface[ID]
 
 	// Get status grey image config
 	IsGrey() bool
 
 	// Set value to `true` if want use CNN image. By default `false`
-	SetCNN(cnn bool) Identiface[ID]
+	SetCNN(isCNN bool) Identiface[ID]
 
 	// Get status CNN image config
 	IsCNN() bool
@@ -134,45 +134,49 @@ func (i *identiface[ID]) RecognizeSingleFromBytes(datasetBytes []byte) (face.Fac
 
 // Set custom recognizer with `https://github.com/Kagami/go-face.git`. By default using `face.NewRecognizer()`
 func (i *identiface[ID]) SetRecognizer(rec *face.Recognizer) Identiface[ID] {
-	panic("not implemented") // TODO: Implement
+	i.rec = rec
+	return i
 }
 
 // Get used recognizer of `Identiface`
 func (i *identiface[ID]) GetRecognizer() *face.Recognizer {
-	panic("not implemented") // TODO: Implement
+	return i.rec
 }
 
 // Set custom tolerance. By default using `0.4`
 func (i *identiface[ID]) SetTolerance(tolerance float32) Identiface[ID] {
-	panic("not implemented") // TODO: Implement
+	i.tolerance = tolerance
+	return i
 }
 
 // Get used tolerance value
 func (i *identiface[ID]) GetTolerance() float32 {
-	panic("not implemented") // TODO: Implement
+	return i.tolerance
 }
 
 // Set value to `true` if want use grey image
-func (i *identiface[ID]) SetGrey(grey bool) Identiface[ID] {
-	panic("not implemented") // TODO: Implement
+func (i *identiface[ID]) SetGrey(isGrey bool) Identiface[ID] {
+	i.isGrey = isGrey
+	return i
 }
 
 // Get status grey image config
 func (i *identiface[ID]) IsGrey() bool {
-	panic("not implemented") // TODO: Implement
+	return i.isGrey
 }
 
 // Set value to `true` if want use CNN image
-func (i *identiface[ID]) SetCNN(cnn bool) Identiface[ID] {
-	panic("not implemented") // TODO: Implement
+func (i *identiface[ID]) SetCNN(isCNN bool) Identiface[ID] {
+	i.isCNN = isCNN
+	return i
 }
 
 // Get status CNN image config
 func (i *identiface[ID]) IsCNN() bool {
-	panic("not implemented") // TODO: Implement
+	return i.isCNN
 }
 
 // Close recognizer of `Identiface`
 func (i *identiface[ID]) Close() {
-	panic("not implemented") // TODO: Implement
+	i.rec.Close()
 }
