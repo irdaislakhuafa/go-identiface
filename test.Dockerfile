@@ -13,7 +13,7 @@ RUN apt update && \
 	apt autoclean && \
 	go version
 
-# get assets
+# get assets not exists
 RUN if ! [ -d ./assets ]; then \
 	make get-assets; \
 	fi
