@@ -64,7 +64,7 @@ func Test_Identiface(t *testing.T) {
 			mode: MODE_CLASSIFY_SINGLE,
 			name: "classify single in bytes",
 			beforeFunc: func(i Identiface[string], test test) {
-				i.SetTolerance(0.3)
+				i.SetTolerance(0.2)
 
 				for _, img := range test.params.images {
 					fileBytes, err := os.ReadFile(filepath.Join(test.params.assetsDir, test.params.imagesDir, img.fileName))
@@ -85,14 +85,45 @@ func Test_Identiface(t *testing.T) {
 					{id: "x1", name: "this is tzuyu", fileName: "tzuyu.jpg"},
 					{id: "x2", name: "this is jimin", fileName: "jimin.jpg"},
 				},
-				imagesDir: imagesDir,
-				assetsDir: assetsDir,
-				modelsDir: modelsDir,
+				imagesDir: imagesDir, assetsDir: assetsDir, modelsDir: modelsDir,
 			},
 			want: want{
 				id: "x1",
 			},
 			isWantInitErr: false,
+			isWantTestErr: false,
+		},
+		{
+			name: "classify failed and datasets loaded",
+			mode: MODE_CLASSIFY_SINGLE,
+			beforeFunc: func(i Identiface[string], test test) {
+				i.SetTolerance(0.2)
+
+				for _, img := range test.params.images {
+					fileBytes, err := os.ReadFile(filepath.Join(test.params.assetsDir, test.params.imagesDir, img.fileName))
+					if err != nil {
+						panic(err)
+					}
+
+					if err := i.AddSingleDatasetFromBytes(img.id, fileBytes); err != nil {
+						panic(err)
+					}
+				}
+
+				i.LoadDatasets()
+			},
+			params: params{
+				targetImage: "rena.jpg",
+				images: []image{
+					{id: "x1", name: "this is tzuyu", fileName: "tzuyu.jpg"},
+					{id: "x2", name: "this is jimin", fileName: "jimin.jpg"},
+				},
+				imagesDir: imagesDir, assetsDir: assetsDir, modelsDir: modelsDir,
+			},
+			want:          want{id: ""},
+			isWantInitErr: false,
+			isWantTestErr: true,
+			wantErr:       wantErr{code: codes.CodeIdentiface},
 		},
 	}
 
@@ -122,24 +153,15 @@ func Test_Identiface(t *testing.T) {
 			case MODE_ADD_DATASET_SINGLE:
 				{
 					for _, img := range tt.params.images {
-						fileBytes, err := os.ReadFile(filepath.Join(tt.params.assetsDir, tt.params.imagesDir, img.fileName))
-						if tt.isWantTestErr {
-							if err == nil {
-								t.Fatalf("want test err is %#v but got err %#v", tt.isWantTestErr, err.Error())
-							} else if code := errors.GetCode(err); code != tt.wantErr.code {
-								t.Fatalf("want test err code is %#v but got err code %#v", tt.wantErr.code, code)
-							} else {
-								t.Logf("want test err code is %#v equals with result err code %#v", tt.wantErr.code, code)
-							}
-						} else {
-							if err != nil {
-								t.Fatalf("want test err is %#v but got err with msg %#v", tt.isWantTestErr, err.Error())
-							}
+						filePath := filepath.Join(tt.params.assetsDir, tt.params.imagesDir, img.fileName)
+						fileBytes, err := os.ReadFile(filePath)
+						if err != nil {
+							t.Fatalf("cannot read file %#v, %#v", filePath, err.Error())
 						}
 
 						if err := iFace.AddSingleDatasetFromBytes(img.id, fileBytes); tt.isWantTestErr {
 							if err == nil {
-								t.Fatalf("want test err is %#v but got err %#v", tt.isWantTestErr, err.Error())
+								t.Fatalf("want test err is %#v but got err %#v", tt.isWantTestErr, err)
 							} else if code := errors.GetCode(err); code != tt.wantErr.code {
 								t.Fatalf("want test err code is %#v but got err code %#v", tt.wantErr.code, code)
 							} else {
@@ -154,25 +176,16 @@ func Test_Identiface(t *testing.T) {
 				}
 			case MODE_CLASSIFY_SINGLE:
 				{
-					targetImageBytes, err := os.ReadFile(filepath.Join(tt.params.assetsDir, tt.params.imagesDir, tt.params.targetImage))
-					if tt.isWantTestErr {
-						if err == nil {
-							t.Fatalf("want test err is %#v but got err %#v", tt.isWantTestErr, err.Error())
-						} else if code := errors.GetCode(err); code != tt.wantErr.code {
-							t.Fatalf("want test err code is %#v but got err code %#v", tt.wantErr.code, code)
-						} else {
-							t.Logf("want test err code is %#v equals with result err code %#v", tt.wantErr.code, code)
-						}
-					} else {
-						if err != nil {
-							t.Fatalf("want test err is %#v but got err with msg %#v", tt.isWantTestErr, err.Error())
-						}
+					filePath := filepath.Join(tt.params.assetsDir, tt.params.imagesDir, tt.params.targetImage)
+					targetImageBytes, err := os.ReadFile(filePath)
+					if err != nil {
+						t.Fatalf("cannot read file %#v, %#v", filePath, err.Error())
 					}
 
 					data, err := iFace.ClassifySingleFromBytes(targetImageBytes)
 					if tt.isWantTestErr {
 						if err == nil {
-							t.Fatalf("want test err is %#v but got err %#v", tt.isWantTestErr, err.Error())
+							t.Fatalf("want test err is %#v but got err %#v with result %+v", tt.isWantTestErr, err, data)
 						} else if code := errors.GetCode(err); code != tt.wantErr.code {
 							t.Fatalf("want test err code is %#v but got err code %#v", tt.wantErr.code, code)
 						} else {
@@ -192,25 +205,16 @@ func Test_Identiface(t *testing.T) {
 				}
 			case MODE_RECOGNIZE_SINGLE:
 				{
-					targetImageBytes, err := os.ReadFile(filepath.Join(tt.params.assetsDir, tt.params.imagesDir, tt.params.targetImage))
-					if tt.isWantTestErr {
-						if err == nil {
-							t.Fatalf("want test err is %#v but got err %#v", tt.isWantTestErr, err.Error())
-						} else if code := errors.GetCode(err); code != tt.wantErr.code {
-							t.Fatalf("want test err code is %#v but got err code %#v", tt.wantErr.code, code)
-						} else {
-							t.Logf("want test err code is %#v equals with result err code %#v", tt.wantErr.code, code)
-						}
-					} else {
-						if err != nil {
-							t.Fatalf("want test err is %#v but got err with msg %#v", tt.isWantTestErr, err.Error())
-						}
+					filePath := filepath.Join(tt.params.assetsDir, tt.params.imagesDir, tt.params.targetImage)
+					targetImageBytes, err := os.ReadFile(filePath)
+					if err != nil {
+						t.Fatalf("cannot read file %#v, %#v", filePath, err.Error())
 					}
 
 					_, err = iFace.RecognizeSingleFromBytes(targetImageBytes)
 					if tt.isWantTestErr {
 						if err == nil {
-							t.Fatalf("want test err is %#v but got err %#v", tt.isWantTestErr, err.Error())
+							t.Fatalf("want test err is %#v but got err %#v", tt.isWantTestErr, err)
 						} else if code := errors.GetCode(err); code != tt.wantErr.code {
 							t.Fatalf("want test err code is %#v but got err code %#v", tt.wantErr.code, code)
 						} else {
@@ -224,5 +228,6 @@ func Test_Identiface(t *testing.T) {
 				}
 			}
 		})
+		fmt.Println("")
 	}
 }
