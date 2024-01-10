@@ -125,6 +125,38 @@ func Test_Identiface(t *testing.T) {
 			isWantTestErr: true,
 			wantErr:       wantErr{code: codes.CodeIdentiface},
 		},
+		{
+			name: "classify failed and datasets not loaded",
+			mode: MODE_CLASSIFY_SINGLE,
+			beforeFunc: func(i Identiface[string], test test) {
+				i.SetTolerance(0.2)
+
+				for _, img := range test.params.images {
+					fileBytes, err := os.ReadFile(filepath.Join(test.params.assetsDir, test.params.imagesDir, img.fileName))
+					if err != nil {
+						panic(err)
+					}
+
+					if err := i.AddSingleDatasetFromBytes(img.id, fileBytes); err != nil {
+						panic(err)
+					}
+				}
+
+				// i.LoadDatasets()
+			},
+			params: params{
+				targetImage: "rena.jpg",
+				images: []image{
+					{id: "x1", name: "this is tzuyu", fileName: "tzuyu.jpg"},
+					{id: "x2", name: "this is jimin", fileName: "jimin.jpg"},
+				},
+				imagesDir: imagesDir, assetsDir: assetsDir, modelsDir: modelsDir,
+			},
+			want:          want{id: ""},
+			isWantInitErr: false,
+			isWantTestErr: true,
+			wantErr:       wantErr{code: codes.CodeIdentiface},
+		},
 	}
 
 	f := files.GetCurrentMethodName()
