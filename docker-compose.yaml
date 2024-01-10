@@ -4,6 +4,6 @@ services:
     container_name: go-identiface-test
     build: 
       context: .
-      dockerfile: Dockerfile
+      dockerfile: test.Dockerfile
     stdin_open: true
     tty: true

@@ -57,4 +57,26 @@ process.
 
 If you use [`Docker`](https://www.docker.com/). I have created a sample `Dockerfile` for you [`here`](./Dockerfile).
 
-## Testing
+## Usage
+
+To use `go-identiface` to your Go code, use it as dependency below:
+
+```bash
+go get github.com/irdaislakhuafa/go-identiface.git
+```
+
+Then import it on your Go project:
+
+```go
+import "github.com/irdaislakhuafa/go-identiface"
+```
+
+## Example
+
+NOTE:
+
+- Make sure you have downloaded the sample assets with command `make get-assets`. This command required [`Makefile`](https://www.gnu.org/software/make) package.
+
+You can see example usage of code [`here`](./example/main.go)
+
+<!-- ## Testing -->
