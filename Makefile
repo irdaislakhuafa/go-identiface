@@ -12,3 +12,6 @@ clean-models:
 
 clean-assets:
 	@ rm -rfv ./assets
+
+test:
+	@ go test -v .../..
