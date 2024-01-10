@@ -40,7 +40,7 @@ type Identiface[ID any] interface {
 	// Get used recognizer of `Identiface`
 	GetRecognizer() *face.Recognizer
 
-	// Set custom tolerance. By default using `0.4`
+	// Set custom tolerance. By default using `0.4`. Smaller value, the stricter the facial pattern recognition
 	SetTolerance(tolerance float32) Identiface[ID]
 
 	// Get used tolerance value
@@ -160,7 +160,7 @@ func (i *identiface[ID]) ClassifySingleFromBytes(datasetBytes []byte) (Data[ID],
 
 	personID := i.rec.ClassifyThreshold(faceID.Descriptor, i.tolerance)
 	if personID < 0 {
-		return Data[ID]{}, errors.NewWithCode(codes.CodeIdentiface, "can't classify bytes dataset, may dataset not registered")
+		return Data[ID]{}, errors.NewWithCode(codes.CodeIdentiface, "can't classify bytes dataset, may dataset not registered or existing datasets not loaded")
 	}
 
 	data := i.datasets[personID]
