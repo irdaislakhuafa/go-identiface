@@ -71,4 +71,12 @@ Then import it on your Go project:
 import "github.com/irdaislakhuafa/go-identiface"
 ```
 
+## Example
+
+NOTE:
+
+- Make sure you have downloaded the sample assets with command `make get-assets`. This command required [`Makefile`](https://www.gnu.org/software/make) package.
+
+You can see example usage of code [`here`](./example/main.go)
+
 <!-- ## Testing -->
