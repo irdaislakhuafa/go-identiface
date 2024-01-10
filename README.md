@@ -55,7 +55,7 @@ process.
 
 ### Docker
 
-If you use [`Docker`](https://www.docker.com/). I have created a sample `Dockerfile` for you [`here`](./Dockerfile).
+If you use [`Docker`](https://www.docker.com/). I have created a sample `Dockerfile` for you [`here`](./Dockerfile) and you can customize according you need.
 
 ## Usage
 
