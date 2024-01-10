@@ -61,8 +61,41 @@ func Test_Identiface(t *testing.T) {
 
 	tests := []test{
 		{
+			mode:       MODE_ADD_DATASET_SINGLE,
+			name:       "success add single datasets from bytes",
+			beforeFunc: nil,
+			params: params{
+				targetImage: "", // empty because we don't neet target image for add datasets, just need images
+				images: []image{
+					{id: "x1", name: "this is tzuyu", fileName: "tzuyu.jpg"},
+					{id: "x2", name: "this is jimin", fileName: "jimin.jpg"},
+				},
+				imagesDir: imagesDir, assetsDir: assetsDir, modelsDir: modelsDir,
+			},
+			want:          want{id: ""},
+			isWantInitErr: false,
+			isWantTestErr: false,
+			wantErr:       wantErr{code: codes.NoCode},
+		},
+		{
+			mode:       MODE_ADD_DATASET_SINGLE,
+			name:       "failed add single datasets from bytes because no face detected",
+			beforeFunc: nil,
+			params: params{
+				targetImage: "", // empty because we don't neet target image for add datasets, just need images
+				images: []image{
+					{id: "x0", name: "this is wall without face", fileName: "wall-no-face.jpeg"},
+				},
+				imagesDir: imagesDir, assetsDir: assetsDir, modelsDir: modelsDir,
+			},
+			want:          want{id: ""},
+			isWantInitErr: false,
+			isWantTestErr: true,
+			wantErr:       wantErr{code: codes.CodeIdentiface},
+		},
+		{
 			mode: MODE_CLASSIFY_SINGLE,
-			name: "classify single in bytes",
+			name: "success classify single in bytes",
 			beforeFunc: func(i Identiface[string], test test) {
 				i.SetTolerance(0.2)
 
@@ -94,7 +127,7 @@ func Test_Identiface(t *testing.T) {
 			isWantTestErr: false,
 		},
 		{
-			name: "classify failed and datasets loaded",
+			name: "failed classify and datasets loaded",
 			mode: MODE_CLASSIFY_SINGLE,
 			beforeFunc: func(i Identiface[string], test test) {
 				i.SetTolerance(0.2)
@@ -126,7 +159,7 @@ func Test_Identiface(t *testing.T) {
 			wantErr:       wantErr{code: codes.CodeIdentiface},
 		},
 		{
-			name: "classify failed and datasets not loaded",
+			name: "failed classify and datasets not loaded",
 			mode: MODE_CLASSIFY_SINGLE,
 			beforeFunc: func(i Identiface[string], test test) {
 				i.SetTolerance(0.2)
@@ -163,7 +196,10 @@ func Test_Identiface(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(fmt.Sprintf("%v -> %v", f, tt.name), func(t *testing.T) {
 			iFace, err := Init[string](filepath.Join(tt.params.assetsDir, tt.params.modelsDir))
-			tt.beforeFunc(iFace, tt)
+
+			if tt.beforeFunc != nil {
+				tt.beforeFunc(iFace, tt)
+			}
 
 			if tt.isWantInitErr {
 				if err == nil {
@@ -193,7 +229,7 @@ func Test_Identiface(t *testing.T) {
 
 						if err := iFace.AddSingleDatasetFromBytes(img.id, fileBytes); tt.isWantTestErr {
 							if err == nil {
-								t.Fatalf("want test err is %#v but got err %#v", tt.isWantTestErr, err)
+								t.Fatalf("want test err is %#v but got err %#v for img id %#v", tt.isWantTestErr, err, img.id)
 							} else if code := errors.GetCode(err); code != tt.wantErr.code {
 								t.Fatalf("want test err code is %#v but got err code %#v", tt.wantErr.code, code)
 							} else {
