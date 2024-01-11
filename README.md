@@ -119,6 +119,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	defer iFace.Close()
 
 	// Adding image datasets to `go-identiface`
 	for _, user := range users {
