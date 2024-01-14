@@ -65,7 +65,7 @@ func Test_Identiface(t *testing.T) {
 			name:       "success add single datasets from bytes",
 			beforeFunc: nil,
 			params: params{
-				targetImage: "", // empty because we don't neet target image for add datasets, just need images
+				targetImage: "", // empty because we don't need target image for add datasets, just need images
 				images: []image{
 					{id: "x1", name: "this is tzuyu", fileName: "tzuyu.jpg"},
 					{id: "x2", name: "this is jimin", fileName: "jimin.jpg"},
@@ -82,7 +82,7 @@ func Test_Identiface(t *testing.T) {
 			name:       "failed add single datasets from bytes because no face detected",
 			beforeFunc: nil,
 			params: params{
-				targetImage: "", // empty because we don't neet target image for add datasets, just need images
+				targetImage: "", // empty because we don't need target image for add datasets, just need images
 				images: []image{
 					{id: "x0", name: "this is wall without face", fileName: "wall-no-face.jpeg"},
 				},
