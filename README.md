@@ -19,7 +19,7 @@ sudo apt-get install libdlib-dev libblas-dev libatlas-base-dev liblapack-dev lib
 sudo apt-get install libdlib-dev libblas-dev libatlas-base-dev liblapack-dev libjpeg62-turbo-dev --no-install-recommends
 ```
 
-[`go-face`](https://github.com/Kagami/go-face.git) used `C` and `C++` language for some case. So, you need to install `C` and `C++` compiler to use this project as dependency, if you have no `C` and `C++` compiler you will get error `"face.Face is undefined"` if you want to compile your golang project. Makesure you have `C` and `C++` compiler installed but if you don't have any `C` and `C++` compiler. Just install it with following command below:
+[`go-face`](https://github.com/Kagami/go-face.git) used `C` and `C++` language for some case. So, you need to install `C` and `C++` compiler to use this project as dependency (just for compile not for run), if you have no `C` and `C++` compiler you will get error `"face.Face is undefined"` if you want to compile your golang project. Makesure you have `C` and `C++` compiler installed but if you don't have any `C` and `C++` compiler. Just install it with following command below:
 
 ```bash
 sudo apt-get install g++ gcc --no-install-recommends
