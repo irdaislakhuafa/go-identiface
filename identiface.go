@@ -102,6 +102,7 @@ func (i *identiface[ID]) GetDatasets() []Data[ID] {
 // Clear used datasets. The datasets will be empty after using this method
 func (i *identiface[ID]) ClearDatasets() {
 	clear(i.datasets)
+	i.rec.SetSamples(nil, nil)
 }
 
 // Load datasets from `Identiface`. By default not loaded for performance reasons
