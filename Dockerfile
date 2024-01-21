@@ -44,5 +44,5 @@ COPY --from=builder /app/app .
 COPY --from=builder /app/assets/models ./assets/models
 
 # then run your app
-CMD [ "./app" ]
+CMD [ "-c", "./app" ]
 

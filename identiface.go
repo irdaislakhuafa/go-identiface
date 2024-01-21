@@ -134,13 +134,13 @@ func (i *identiface[ID]) AddSingleDatasetFromBytes(id ID, datasetBytes []byte) e
 	}
 
 	if err != nil {
-		return errors.NewWithCode(codes.CodeIdentiface, "cannot recognize face from bytes dataset, %v", err)
+		return errors.NewWithCode(codes.CodeIdentifaceFaceNotRecognized, "cannot recognize face from bytes dataset, %v", err)
 	}
 
 	if lf := len(faces); lf <= 0 {
-		return errors.NewWithCode(codes.CodeIdentiface, "no face detected from bytes dataset")
+		return errors.NewWithCode(codes.CodeIdentifaceNoFaceDetected, "no face detected from bytes dataset")
 	} else if lf > 1 {
-		return errors.NewWithCode(codes.CodeIdentiface, "there is more than one face from bytes dataset")
+		return errors.NewWithCode(codes.CodeIdentifaceMultipleFaceDetected, "there is more than one face from bytes dataset")
 	}
 
 	data := Data[ID]{
@@ -161,7 +161,7 @@ func (i *identiface[ID]) ClassifySingleFromBytes(datasetBytes []byte) (Data[ID],
 
 	personID := i.rec.ClassifyThreshold(faceID.Descriptor, i.tolerance)
 	if personID < 0 {
-		return Data[ID]{}, errors.NewWithCode(codes.CodeIdentiface, "can't classify bytes dataset, may dataset not registered or existing datasets not loaded")
+		return Data[ID]{}, errors.NewWithCode(codes.CodeIdentifaceFaceNotRegistered, "can't classify bytes dataset, may dataset not registered or existing datasets not loaded")
 	}
 
 	data := i.datasets[personID]
@@ -184,11 +184,11 @@ func (i *identiface[ID]) RecognizeSingleFromBytes(datasetBytes []byte) (face.Fac
 	}
 
 	if err != nil {
-		return face.Face{}, errors.NewWithCode(codes.CodeIdentiface, "cannot recognize single face, %v", err)
+		return face.Face{}, errors.NewWithCode(codes.CodeIdentifaceFaceNotRecognized, "cannot recognize single face, %v", err)
 	}
 
 	if faceID == nil {
-		return face.Face{}, errors.NewWithCode(codes.CodeIdentiface, "the bytes dataset does not contain a single face")
+		return face.Face{}, errors.NewWithCode(codes.CodeIdentifaceNoFaceDetected, "the bytes dataset does not contain a single face")
 	}
 
 	return *faceID, nil

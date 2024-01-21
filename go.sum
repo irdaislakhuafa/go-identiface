@@ -4,3 +4,5 @@ github.com/google/uuid v1.5.0 h1:1p67kYwdtXjb0gL0BPiP1Av9wiZPo5A8z2cWkTZ+eyU=
 github.com/google/uuid v1.5.0/go.mod h1:TIyPZe4MgqvfeYDBFedMoGGpEw/LqOeaOT+nhxU+yHo=
 github.com/irdaislakhuafa/go-sdk v0.0.6 h1:4CDE30YDLzcg98Rqa3ZNBWPjM9QavuRMsiEAF16EOjo=
 github.com/irdaislakhuafa/go-sdk v0.0.6/go.mod h1:nyQhk/VXGx8wyI2uVilNMPd+ZaItc8PZ4q/hFtYEA3I=
+github.com/irdaislakhuafa/go-sdk v0.0.8 h1:Pj6CDhmJQBjO9OxKczeuM+4CRJAmpw3GVHCx7yORTQo=
+github.com/irdaislakhuafa/go-sdk v0.0.8/go.mod h1:CLvP3wx3Mh/YsOq8JjKfCBkyIWNN8wQeYjrlqM61DVA=
